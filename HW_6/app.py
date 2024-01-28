@@ -2,6 +2,11 @@ from pydantic import BaseModel
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
+from typing import List
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shop.db'
+db = SQLAlchemy(app)
 
 
 class ProductCreate(BaseModel):
@@ -30,10 +35,6 @@ class UserCreate(BaseModel):
 class UserRead(UserCreate):
     id: int
 
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shop.db'
-db = SQLAlchemy(app)
 
 # Модель для таблицы товаров
 class Product(db.Model):
@@ -211,4 +212,5 @@ def delete_user(user_id):
     return jsonify({'error': 'User not found'}), 404
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
